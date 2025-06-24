@@ -1,0 +1,114 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>트러블코드 검색</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 20px;
+      background-color: #f7f7f7;
+    }
+    h1 {
+      text-align: center;
+    }
+    .btns {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    button {
+      padding: 10px 20px;
+      border: none;
+      background: #2c3e50;
+      color: white;
+      font-size: 16px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .search {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .search input {
+      padding: 10px;
+      font-size: 16px;
+      width: 200px;
+    }
+    .card {
+      background: white;
+      padding: 20px;
+      margin: 0 auto;
+      width: 90%;
+      max-width: 600px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    .card h3 {
+      margin: 0;
+      color: #2980b9;
+    }
+    .card p {
+      margin: 5px 0;
+    }
+  </style>
+</head>
+<body>
+  <h1>트러블코드 검색</h1>
+  <div class="btns">
+    <button onclick="loadData('d')">D-con</button>
+    <button onclick="loadData('e')">E-con</button>
+    <button onclick="loadData('e0x')">EOx-con</button>
+  </div>
+  <div class="search">
+    <input type="text" id="codeInput" placeholder="코드를 입력하세요 (예: D0001)" />
+    <button onclick="searchCode()">검색</button>
+  </div>
+  <div id="result"></div>
+
+  <script>
+    let dataset = [];
+
+    function loadData(type) {
+      const files = {
+        d: 'd_trouble.json',
+        e: 'e_trouble.json',
+        e0x: 'e0x_trouble.json'
+      };
+      fetch(files[type])
+        .then(res => res.json())
+        .then(data => {
+          dataset = data;
+          document.getElementById('result').innerHTML = '';
+          document.getElementById('codeInput').value = '';
+          alert(type.toUpperCase() + '-con 데이터가 로드되었습니다.');
+        });
+    }
+
+    function searchCode() {
+      const input = document.getElementById('codeInput').value.trim();
+      const found = dataset.find(row => row['코드'] === input);
+      const resultDiv = document.getElementById('result');
+      resultDiv.innerHTML = '';
+
+      if (found) {
+        resultDiv.innerHTML = `
+          <div class="card">
+            <h3>코드: ${found['코드']}</h3>
+            <p><strong>설명:</strong> ${found['설명']}</p>
+            <p><strong>원인:</strong> ${found['원인']}</p>
+            <p><strong>조치방안:</strong> ${found['조치방안']}</p>
+          </div>
+        `;
+      } else {
+        resultDiv.innerHTML = '<p style="text-align:center; color: red;">일치하는 코드가 없습니다.</p>';
+      }
+    }
+  </script>
+</body>
+</html>
