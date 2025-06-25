@@ -1,0 +1,61 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>장비 선택</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background-color: #f7f7f7;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+    .password-box, .device-box {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+    input[type="password"], button {
+      padding: 10px;
+      font-size: 16px;
+      margin: 10px;
+    }
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="password-box" id="passwordBox">
+    <h2>비밀번호를 입력하세요</h2>
+    <input type="password" id="passwordInput" placeholder="비밀번호">
+    <button onclick="checkPassword()">확인</button>
+    <p id="pwMsg" style="color: red;"></p>
+  </div>
+
+  <div class="device-box hidden" id="deviceBox">
+    <h2>장비를 선택하세요</h2>
+    <button onclick="location.href='robot.html'">로보트</button>
+    <button onclick="location.href='weld.html'">용접기</button>
+  </div>
+
+  <script>
+    function checkPassword() {
+      const pw = document.getElementById('passwordInput').value;
+      const pwMsg = document.getElementById('pwMsg');
+      if (pw === '3941') {
+        document.getElementById('passwordBox').classList.add('hidden');
+        document.getElementById('deviceBox').classList.remove('hidden');
+      } else {
+        pwMsg.textContent = "비밀번호가 틀렸습니다.";
+      }
+    }
+  </script>
+</body>
+</html>
