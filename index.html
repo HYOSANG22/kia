@@ -1,0 +1,51 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>기아 트러블슈팅</title>
+  <style>
+    body { font-family: sans-serif; background: #f4f4f4; text-align: center; padding: 100px; }
+    .card { background: white; padding: 40px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); display: inline-block; }
+    input[type='password'] { padding: 10px; font-size: 18px; width: 100px; text-align: center; }
+    button { margin-top: 10px; padding: 10px 20px; font-size: 16px; background: #2c3e50; color: white; border: none; border-radius: 5px; cursor: pointer; }
+    .hidden { display: none; }
+    .select-btn { margin: 10px; padding: 15px 30px; font-size: 18px; background: #3498db; border: none; color: white; border-radius: 8px; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <div class="card" id="loginCard">
+    <h2>비밀번호를 입력하세요</h2>
+    <input type="password" id="pwInput" maxlength="4" />
+    <br>
+    <button onclick="checkPW()">ENTER</button>
+    <p id="error" style="color:red;"></p>
+  </div>
+
+  <div class="card hidden" id="selectCard">
+    <h2>장비를 선택하세요</h2>
+    <button class="select-btn" onclick="goPage('robot')">🤖 로보트</button>
+    <button class="select-btn" onclick="goPage('weld')">🔧 용접기</button>
+  </div>
+
+  <script>
+    function checkPW() {
+      const pw = document.getElementById('pwInput').value;
+      if (pw === '3941') {
+        document.getElementById('loginCard').classList.add('hidden');
+        document.getElementById('selectCard').classList.remove('hidden');
+      } else {
+        document.getElementById('error').innerText = '비밀번호가 틀렸습니다.';
+      }
+    }
+
+    function goPage(type) {
+      if (type === 'robot') {
+        window.location.href = 'robot.html';
+      } else if (type === 'weld') {
+        window.location.href = 'weld.html';
+      }
+    }
+  </script>
+</body>
+</html>
