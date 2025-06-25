@@ -1,1 +1,155 @@
-<!-- 여기에 기존 로보트 검색 페이지 코드가 들어갑니다 -->
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>로보트 트러블코드 검색</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f4f6f8;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background-color: #2c3e50;
+      color: white;
+      padding: 1rem 2rem;
+      text-align: center;
+      font-size: 1.5rem;
+    }
+    main {
+      max-width: 800px;
+      margin: 2rem auto;
+      background: white;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    .btn-group {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .btn-group button {
+      padding: 0.7rem 1.5rem;
+      font-size: 1rem;
+      border: none;
+      border-radius: 8px;
+      background-color: #3498db;
+      color: white;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn-group button:hover {
+      background-color: #2980b9;
+    }
+    .feedback {
+      text-align: center;
+      margin-bottom: 1rem;
+      color: #555;
+    }
+    .search {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+    .search input {
+      flex: 1;
+      padding: 0.6rem;
+      font-size: 1rem;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+    .search button {
+      padding: 0.6rem 1rem;
+      background-color: #2ecc71;
+      border: none;
+      color: white;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    #resultBox {
+      display: none;
+      margin-top: 1.5rem;
+      border-top: 1px solid #ccc;
+      padding-top: 1rem;
+    }
+    .field {
+      margin-bottom: 0.8rem;
+    }
+    .field strong {
+      display: inline-block;
+      width: 140px;
+      color: #555;
+    }
+    #notFound {
+      text-align: center;
+      color: red;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <header>로보트 트러블코드 검색</header>
+  <main>
+    <div class="btn-group">
+      <button onclick="selectDB('d')">D</button>
+      <button onclick="selectDB('e')">E</button>
+      <button onclick="selectDB('e0x')">E0</button>
+    </div>
+    <div class="feedback" id="feedback">D컨트롤러가 선택되었습니다.</div>
+    <div class="search">
+      <input type="text" id="codeInput" placeholder="에러코드 입력 (예: D1040)" />
+      <button onclick="searchCode()">검색</button>
+    </div>
+    <div id="resultBox">
+      <div class="field"><strong>코드:</strong> <span id="codeTitle"></span></div>
+      <div class="field"><strong>설명:</strong> <span id="desc"></span></div>
+      <div class="field"><strong>원인:</strong> <span id="cause"></span></div>
+      <div class="field"><strong>조치방안:</strong> <span id="action"></span></div>
+    </div>
+    <p id="notFound">일치하는 코드가 없습니다.</p>
+  </main>
+  <script>
+    let db = {};
+    let currentDB = 'd';
+
+    function selectDB(type) {
+      currentDB = type;
+      fetch(type + "_trouble.json")
+        .then(res => res.json())
+        .then(data => {
+          db = data;
+          const map = { d: 'D', e: 'E', e0x: 'E0' };
+          document.getElementById("feedback").innerText = map[type] + "컨트롤러가 선택되었습니다.";
+        });
+    }
+
+    function searchCode() {
+      const input = document.getElementById("codeInput").value.trim();
+      const result = db.find(entry => entry.코드 === input);
+
+      const box = document.getElementById("resultBox");
+      const notFound = document.getElementById("notFound");
+
+      if (result) {
+        document.getElementById("codeTitle").innerText = result.코드;
+        document.getElementById("desc").innerText = result.설명;
+        document.getElementById("cause").innerText = result.원인;
+        document.getElementById("action").innerText = result.조치방안;
+        box.style.display = "block";
+        notFound.style.display = "none";
+      } else {
+        box.style.display = "none";
+        notFound.style.display = "block";
+      }
+    }
+
+    // 초기 로딩
+    selectDB('d');
+  </script>
+</body>
+</html>
