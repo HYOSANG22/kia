@@ -2,111 +2,48 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>트러블코드 검색</title>
+  <meta charset="UTF-8">
+  <title>기아 트러블슈팅</title>
   <style>
-    body {
-      font-family: sans-serif;
-      padding: 20px;
-      background-color: #f7f7f7;
-    }
-    h1 {
-      text-align: center;
-    }
-    .btns {
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-      margin-bottom: 20px;
-    }
-    button {
-      padding: 10px 20px;
-      border: none;
-      background: #2c3e50;
-      color: white;
-      font-size: 16px;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-    .search {
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-      margin-bottom: 20px;
-    }
-    .search input {
-      padding: 10px;
-      font-size: 16px;
-      width: 200px;
-    }
-    .card {
-      background: white;
-      padding: 20px;
-      margin: 0 auto;
-      width: 90%;
-      max-width: 600px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    }
-    .card h3 {
-      margin: 0;
-      color: #2980b9;
-    }
-    .card p {
-      margin: 5px 0;
-    }
+    body { font-family: sans-serif; background: #f4f4f4; text-align: center; padding: 100px; }
+    .card { background: white; padding: 40px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); display: inline-block; }
+    input[type='password'] { padding: 10px; font-size: 18px; width: 100px; text-align: center; }
+    button { margin-top: 10px; padding: 10px 20px; font-size: 16px; background: #2c3e50; color: white; border: none; border-radius: 5px; cursor: pointer; }
+    .hidden { display: none; }
+    .select-btn { margin: 10px; padding: 15px 30px; font-size: 18px; background: #3498db; border: none; color: white; border-radius: 8px; cursor: pointer; }
   </style>
 </head>
 <body>
-  <h1>트러블코드 검색</h1>
-  <div class="btns">
-    <button onclick="loadData('d')">D-con</button>
-    <button onclick="loadData('e')">E-con</button>
-    <button onclick="loadData('e0x')">EOx-con</button>
+  <div class="card" id="loginCard">
+    <h2>비밀번호를 입력하세요</h2>
+    <input type="password" id="pwInput" maxlength="4" />
+    <br>
+    <button onclick="checkPW()">ENTER</button>
+    <p id="error" style="color:red;"></p>
   </div>
-  <div class="search">
-    <input type="text" id="codeInput" placeholder="코드를 입력하세요 (예: D0001)" />
-    <button onclick="searchCode()">검색</button>
+
+  <div class="card hidden" id="selectCard">
+    <h2>장비를 선택하세요</h2>
+    <button class="select-btn" onclick="goPage('robot')">🤖 로보트</button>
+    <button class="select-btn" onclick="goPage('weld')">🔧 용접기</button>
   </div>
-  <div id="result"></div>
 
   <script>
-    let dataset = [];
-
-    function loadData(type) {
-      const files = {
-        d: 'd_trouble.json',
-        e: 'e_trouble.json',
-        e0x: 'e0x_trouble.json'
-      };
-      fetch(files[type])
-        .then(res => res.json())
-        .then(data => {
-          dataset = data;
-          document.getElementById('result').innerHTML = '';
-          document.getElementById('codeInput').value = '';
-          alert(type.toUpperCase() + '-con 데이터가 로드되었습니다.');
-        });
+    function checkPW() {
+      const pw = document.getElementById('pwInput').value;
+      if (pw === '3941') {
+        document.getElementById('loginCard').classList.add('hidden');
+        document.getElementById('selectCard').classList.remove('hidden');
+      } else {
+        document.getElementById('error').innerText = '비밀번호가 틀렸습니다.';
+      }
     }
 
-    function searchCode() {
-      const input = document.getElementById('codeInput').value.trim();
-      const found = dataset.find(row => row['코드'] === input);
-      const resultDiv = document.getElementById('result');
-      resultDiv.innerHTML = '';
-
-      if (found) {
-        resultDiv.innerHTML = `
-          <div class="card">
-            <h3>코드: ${found['코드']}</h3>
-            <p><strong>설명:</strong> ${found['설명']}</p>
-            <p><strong>원인:</strong> ${found['원인']}</p>
-            <p><strong>조치방안:</strong> ${found['조치방안']}</p>
-          </div>
-        `;
-      } else {
-        resultDiv.innerHTML = '<p style="text-align:center; color: red;">일치하는 코드가 없습니다.</p>';
+    function goPage(type) {
+      if (type === 'robot') {
+        window.location.href = 'index.html'; // 기존 로보트용
+      } else if (type === 'weld') {
+        window.location.href = 'weld.html'; // 용접기용 페이지
       }
     }
   </script>
