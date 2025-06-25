@@ -1,0 +1,164 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>용접기 트러블코드 검색</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: #f0f4f8;
+      color: #333;
+    }
+    header {
+      background: #2c3e50;
+      color: white;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 1.5rem;
+    }
+    header a {
+      font-size: 0.85rem;
+      color: #ecf0f1;
+      text-decoration: none;
+      background: #3498db;
+      padding: 0.4rem 0.7rem;
+      border-radius: 4px;
+    }
+    main {
+      max-width: 800px;
+      margin: 2rem auto;
+      background: white;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.05);
+    }
+    .search-box {
+      display: flex;
+      margin-bottom: 1.5rem;
+      gap: 0.5rem;
+    }
+    .search-box span {
+      background: #2980b9;
+      color: white;
+      padding: 0.6rem 0.9rem;
+      font-weight: bold;
+      border-radius: 8px 0 0 8px;
+    }
+    .search-box input {
+      flex: 1;
+      padding: 0.6rem;
+      font-size: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 0;
+    }
+    .search-box button {
+      padding: 0.6rem 1rem;
+      background: #27ae60;
+      color: white;
+      border: none;
+      border-radius: 0 8px 8px 0;
+      cursor: pointer;
+    }
+    #resultBox {
+      display: none;
+      margin-top: 2rem;
+      border-top: 1px solid #ddd;
+      padding-top: 1rem;
+    }
+    #resultBox h2 {
+      margin-bottom: 0.5rem;
+    }
+    .field {
+      margin-bottom: 1rem;
+    }
+    .field strong {
+      display: inline-block;
+      width: 140px;
+      color: #555;
+    }
+    .image-container {
+      text-align: center;
+      margin-top: 1rem;
+    }
+    .image-container img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 10px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+    }
+    #notFound {
+      display: none;
+      color: red;
+      margin-top: 1rem;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>용접기 트러블코드 검색</h1>
+    <a href="welcom1000_manual.pdf" download>welcom1000 메뉴얼 다운로드</a>
+  </header>
+  <main>
+    <div class="search-box">
+      <span>E</span>
+      <input type="number" id="codeInput" placeholder="숫자 입력 (예: 1, 15, 60)" />
+      <button onclick="searchCode()">검색</button>
+    </div>
+    <div id="resultBox">
+      <h2 id="codeTitle"></h2>
+      <div class="field"><strong>에러 설명:</strong> <span id="desc"></span></div>
+      <div class="field"><strong>에러 발생 원인:</strong> <span id="cause"></span></div>
+      <div class="field"><strong>에러 조치 방안:</strong> <span id="action"></span></div>
+      <div class="image-container">
+        <p><strong>상세 조치 방법:</strong></p>
+        <img id="refImg" src="" alt="관련 이미지"/>
+      </div>
+    </div>
+    <p id="notFound">일치하는 코드가 없습니다.</p>
+  </main>
+
+  <script>
+    let db = {};
+    fetch("welder_trouble_with_common_img.json")
+      .then(res => res.json())
+      .then(data => db = data);
+
+    function searchCode() {
+      const input = document.getElementById("codeInput").value;
+      const code = "E" + parseInt(input, 10).toString().padStart(2, '0');
+      const data = db[code];
+
+      const resultBox = document.getElementById("resultBox");
+      const notFound = document.getElementById("notFound");
+      const imgEl = document.getElementById("refImg");
+
+      if (data) {
+        document.getElementById("codeTitle").innerText = code;
+        document.getElementById("desc").innerText = data.desc;
+        document.getElementById("cause").innerText = data.cause;
+        document.getElementById("action").innerText = data.action;
+        if (data.img) {
+          imgEl.src = "images/" + data.img + ".jpg";
+          imgEl.style.display = "block";
+        } else {
+          imgEl.style.display = "none";
+        }
+        resultBox.style.display = "block";
+        notFound.style.display = "none";
+      } else {
+        resultBox.style.display = "none";
+        notFound.style.display = "block";
+      }
+    }
+  </script>
+</body>
+</html>
