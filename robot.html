@@ -1,0 +1,150 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>로보트 트러블코드 검색</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to bottom right, #dbe9f4, #f7faff);
+      padding: 30px;
+    }
+    .container {
+      max-width: 720px;
+      margin: auto;
+      background: white;
+      border-radius: 15px;
+      padding: 30px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+    .buttons {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .buttons button {
+      padding: 12px 25px;
+      margin: 0 10px;
+      font-size: 16px;
+      font-weight: bold;
+      border: none;
+      background: #3498db;
+      color: white;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .buttons button:hover {
+      background: #2980b9;
+    }
+    .feedback {
+      text-align: center;
+      font-size: 14px;
+      color: #555;
+      margin-bottom: 20px;
+      height: 20px;
+    }
+    .search {
+      display: flex;
+      margin-bottom: 20px;
+    }
+    .search input {
+      flex: 1;
+      padding: 12px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 8px 0 0 8px;
+    }
+    .search button {
+      padding: 12px 20px;
+      font-size: 16px;
+      background: #2ecc71;
+      color: white;
+      border: none;
+      border-radius: 0 8px 8px 0;
+      cursor: pointer;
+    }
+    .result {
+      border-top: 1px solid #ccc;
+      padding-top: 20px;
+      margin-top: 10px;
+    }
+    .result h2 {
+      margin-top: 0;
+      color: #2c3e50;
+    }
+    .hidden {
+      display: none;
+    }
+    #notFound {
+      color: red;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>로보트 트러블코드 검색</h1>
+    <div class="buttons">
+      <button onclick="selectDB('d')">D</button>
+      <button onclick="selectDB('e')">E</button>
+      <button onclick="selectDB('e0x')">E0</button>
+    </div>
+    <div class="feedback" id="feedback">D코드가 선택되었습니다.</div>
+    <div class="search">
+      <input type="text" id="codeInput" placeholder="에러코드 입력 (예: D1050)" />
+      <button onclick="searchCode()">검색</button>
+    </div>
+    <div class="result hidden" id="resultBox">
+      <h2 id="codeTitle"></h2>
+      <p><strong>설명:</strong> <span id="desc"></span></p>
+      <p><strong>원인:</strong> <span id="cause"></span></p>
+      <p><strong>조치방안:</strong> <span id="action"></span></p>
+    </div>
+    <p id="notFound" class="hidden">일치하는 코드가 없습니다.</p>
+  </div>
+
+  <script>
+    let db = {};
+    let currentDB = 'd';
+
+    function selectDB(type) {
+      currentDB = type;
+      fetch(type + "_trouble.json")
+        .then(res => res.json())
+        .then(data => {
+          db = data;
+          const map = { d: 'D', e: 'E', e0x: 'E0' };
+          document.getElementById("feedback").innerText = map[type] + "컨트롤러가 선택되었습니다.";
+        });
+    }
+
+    function searchCode() {
+      const input = document.getElementById("codeInput").value.trim();
+      const result = db.find(entry => entry.코드 === input);
+
+      const box = document.getElementById("resultBox");
+      const notFound = document.getElementById("notFound");
+
+      if (result) {
+        document.getElementById("codeTitle").innerText = result.코드;
+        document.getElementById("desc").innerText = result.설명;
+        document.getElementById("cause").innerText = result.원인;
+        document.getElementById("action").innerText = result.조치방안;
+        box.classList.remove("hidden");
+        notFound.classList.add("hidden");
+      } else {
+        box.classList.add("hidden");
+        notFound.classList.remove("hidden");
+      }
+    }
+
+    // 초기 로딩
+    selectDB('d');
+  </script>
+</body>
+</html>
